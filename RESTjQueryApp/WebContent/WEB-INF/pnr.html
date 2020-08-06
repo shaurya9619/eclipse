@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>PNR Status</title>
+<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+<script>
+	$(function() {
+		$("form").submit(
+				function(evt) {
+					evt.preventDefault();
+					var pnrNo = $("#pnrNo").val();
+					var url = "http://localhost:8080/RESTApp/api/pnr?pnrNo="
+							+ pnrNo;
+					$.ajax({
+						url : url,
+						method : 'Get',
+						data : 'JSON',
+						success : function(data) {
+							//alert(JSON.stringify(data));
+							var elem1 = $("<p/>").text(
+									"Train No : " + data.trainNo);
+							$("#result").append(elem1);
+							var elem2 = $("<p/>").text(
+									"Travel Date : " + data.travelDate);
+							$("#result").append(elem2);
+							
+							var tbl= $("<table/>");
+							for (let p of data.passengers) {
+								var tr = $("<tr/>");
+								var td1 = $("<td>").text(p.name);
+								var td2 = $("<td>").text(p.gender);
+								var td3 = $("<td>").text(p.status);
+								tr.append(td1);
+								tr.append(td2);
+								tr.append(td3);
+								tbl.append(tr);
+							}
+							$("#result").append(tbl);
+						}
+					})
+				})
+	})
+</script>
+</head>
+<body>
+	<h2>Welcome to Breakmytrip.com</h2>
+	<h3>Check your PNR status here (If your status is waiting, you
+		better book a flight :D)</h3>
+	<h4>For some amazing offers on Flight bookings, click here...</h4>
+	<form>
+		Enter PNR No: <input type="number" id="pnrNo" /><br />
+		<button type="submit">Show Status</button>
+	</form>
+	<div id="result"></div>
+</body>
+</html>
